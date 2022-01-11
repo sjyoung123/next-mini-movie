@@ -18,13 +18,7 @@ interface IMovies {
 const Home = ({ data: movies }: IMovies) => {
   const router = useRouter();
   const onClick = (id: number, title: string) => {
-    router.push(
-      {
-        pathname: `/movies/${id}`,
-        query: { title },
-      },
-      `/movies/${id}`
-    );
+    router.push(`/movies/${title}/${id}`);
   };
   return (
     <>
