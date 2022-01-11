@@ -1,5 +1,3 @@
-import type { NextPage } from "next";
-import { useEffect, useState } from "react";
 import Seo from "../components/Seo";
 
 interface IMovie {
@@ -11,36 +9,22 @@ interface IMovie {
 }
 
 interface IMovies {
-  results: IMovie[];
+  data: {
+    results: IMovie[];
+  };
 }
 
-const Home: NextPage = () => {
-  const [movies, setMovies] = useState<IMovies>();
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    (async () => {
-      const data = await (await fetch("/api/movies")).json();
-      setMovies(data);
-      setLoading(false);
-    })();
-  }, []);
-
+const Home = ({ data: movies }: IMovies) => {
   return (
     <>
       <div className="container">
         <Seo title="Home" />
-        {loading ? (
-          <span>Loading...</span>
-        ) : (
-          movies?.results.map((movie) => (
-            <div className="movie" key={movie.id}>
-              <img
-                src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
-              />
-              <h4>{movie.title}</h4>
-            </div>
-          ))
-        )}
+        {movies?.results.map((movie) => (
+          <div className="movie" key={movie.id}>
+            <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
+            <h4>{movie.title}</h4>
+          </div>
+        ))}
         <style jsx>{`
           .container {
             display: grid;
@@ -68,3 +52,13 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+//server-side
+export async function getServerSideProps() {
+  const data = await (await fetch("http://localhost:3000/api/movies")).json();
+  return {
+    props: {
+      data,
+    },
+  };
+}
