@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import Seo from "../components/Seo";
 
 interface IMovie {
@@ -15,12 +16,26 @@ interface IMovies {
 }
 
 const Home = ({ data: movies }: IMovies) => {
+  const router = useRouter();
+  const onClick = (id: number, title: string) => {
+    router.push(
+      {
+        pathname: `/movies/${id}`,
+        query: { title },
+      },
+      `/movies/${id}`
+    );
+  };
   return (
     <>
       <div className="container">
         <Seo title="Home" />
         {movies?.results.map((movie) => (
-          <div className="movie" key={movie.id}>
+          <div
+            onClick={() => onClick(movie.id, movie.title)}
+            className="movie"
+            key={movie.id}
+          >
             <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
             <h4>{movie.title}</h4>
           </div>
@@ -31,6 +46,9 @@ const Home = ({ data: movies }: IMovies) => {
             grid-template-columns: 1fr 1fr;
             padding: 20px;
             gap: 20px;
+          }
+          .movie {
+            cursor: pointer;
           }
           .movie img {
             max-width: 100%;
